@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MelcatAuto</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFA500">
+</head>
+<body>
+    <div class="nav">
+       <h1>MelcatAuto</h1> 
+    </div>
+    
+    <main>
+        <h2 class="center">CONTROL PANE</h2>
+        <!-- Tab links -->
+        <div class="tab">
+            <button class="tablinks" onclick="openCity(event, 'powerStyle'), swap('1')" id="defaultOpen1">Power</button>
+            <button class="tablinks" onclick="openCity(event, 'pumpStyle'), swap('0')">Water Pump</button>
+            <button class="tablinks" onclick="openCity(event, 'lightSyle'), swap('0')">Lights</button>
+        </div>
+        
+        <!-- Mode selector tab -->
+        <div class="tab edit">
+            <button class="tablinks1" onclick="openCity1(event, 'powerStyle')" id="defaultOpen">Manual</button>
+            <h2 class="tablinks1"><strong> MODE</strong> </h2>
+            <button class="tablinks1" onclick="openCity1(event, 'autoStyle')">Automatic</button>
+           
+        </div>
+        <!-- Tab content -->
+        <div class="see tabcontent parent" id="autoStyle" >
+            <!-- for automatic mode -->
+            <h3>STATUS: <strong id="genn">.%Power%.</strong></h3>
+            <h1><strong>ACTIVE</strong></h1>
+            <form action="/auto" method="POST" class="time">
+                <div>
+                    <label for="appt"><strong>Start Time:</strong></label>
+                    <input type="time" id="StartTime" name="Start" class="box" required> 
+                </div>  
+                <div>
+                    <label for="appt"><strong>Stop Time:</strong></label>
+                    <input type="time" id="StartTime" name="Stop" class="box" required> 
+                </div>   
+                <button>Run</button>
+            </form>  
+        </div>
+
+        <div id="powerStyle" class="tabcontent parent">
+            
+            <div>
+               <!-- <h3>MODE: <strong>.%PMODE%.</strong></h3> -->
+                <h3>STATUS: <strong id="gen">.%Power%.</strong></h3>
+                <button id="on" onclick="Gen1()">GEN ON</button>
+                <button id="off" onclick="Gen2()">GEN OFF</button>
+            </div>
+        </div>
+    
+        <div id="pumpStyle" class="tabcontent parent">
+            <div>
+                <h3>MODE: <strong>.%WMODE%.</strong></h3>
+                <h3>STATUS: <strong id="pump">.%Pump%.</strong></h3>
+                <button id="on" onclick="Pump1()">PUMP ON</button>
+                <button id="off" onclick="Pump2()">PUMP OFF</button>
+                <button>Automatic</button>
+            </div>
+    
+        </div>
+    
+        <div id="lightSyle" class="tabcontent parent">
+            <div>
+                <h3>Mode: <strong>.%LMODE%</strong></h3>
+                <h3>STATUS: <strong id="light">.%Light%.</strong></h3>
+                <button class="on" id="on" onclick="Light1()">LIGHT ON</button>
+                <button id="off" onclick="Light2()">LIGHT OFF</button>
+                <button>Automatic</button>
+            </div>
+            
+        </div>
+    </main>
+    <!-- <script src="app.js"></script> -->
+    <script>
+        //tab menu script... does not function properly if placed in another file
+        document.getElementById("defaultOpen").click();
+        document.getElementById("defaultOpen1").click(); //for mode selector default tab
+         //tab menu script... does not function properly if placed in another file
+        function openCity(evt, cityName) {
+            // Declare all variables
+            let i, tabcontent, tablinks;
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            }
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "flex";
+            evt.currentTarget.className += " active";
+        }
+        // mode selector tab menu script
+        function openCity1(evt, cityName) {
+            // Declare all variables
+            let i, tabcontent, tablinks;
+            // get parent tab element and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            }
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent1");
+            for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            }
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks1");
+            for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "flex";
+            evt.currentTarget.className += " active";
+        }
+        // turn off auto tab for waterPump and light control pane
+        function swap(a){
+            let tablinks;
+            tablinks = document.getElementsByClassName("tablinks1");
+            for(i=0;i<tablinks.length; i++){
+                if(a==1){
+                    tablinks[i].style.visibility = "visible";
+                    // tablinks[i].style.display = "block";
+                }else if(a==0){
+                    tablinks[i].style.visibility = "hidden";
+                    // tablinks[i].style.display = "none";
+                }
+                
+            }
+        }
+        //all functions with 1 suffix represent on state, while those with 2 is off state
+        function Gen1() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("gen").innerHTML = this.responseText;
+                    document.getElementById("genn").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/onGen", true);
+            xhttp.send();
+        }
+        function Gen2() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("gen").innerHTML = this.responseText;
+                    document.getElementById("genn").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/offGen", true);
+            xhttp.send();
+        }
+        function auto() {
+            var xhttp = new XMLHttpRequest();
+            let stTime = document.getElementById("StartTime");
+            let stValue =spTime.value.substring(0,2); 
+            let spTime = document.getElementById("StopTime");
+            let spValue = spTime.value.substring(3,5);
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("gen").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("POST", "/auto", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            console.log(Start);
+            console.log(spTime);
+            xhttp.send("Start & Stop");
+        }
+        //update Status
+        function updateGen() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("gen").innerHTML = this.responseText;
+                    document.getElementById("genn").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/Gupdate", true);
+            xhttp.send();
+        }
+        setInterval(updateGen(),3000);
+        //for pump
+        function Pump1() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("pump").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/onPump", true);
+            xhttp.send();
+        }
+        function Pump2() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("pump").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/offPump", true);
+            xhttp.send();
+        }
+
+        //for light
+        function Light1() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("light").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/onLight", true);
+            xhttp.send();
+        }
+        function Light2() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("light").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/offLight", true);
+            xhttp.send();
+        }
+    </script>
+</body>
+</html>
